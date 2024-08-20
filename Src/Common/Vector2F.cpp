@@ -1,0 +1,20 @@
+#include "Vector2.h"
+#include "Vector2F.h"
+
+Vector2F::Vector2F(void)
+{
+	x = 0.0f;
+	y = 0.0f;
+}
+
+Vector2F::Vector2F(float vX, float vY)
+{
+	x = vX;
+	y = vY;
+}
+
+Vector2F::Vector2F(Vector2 value)
+{
+	x = static_cast<float>(value.x);
+	y = static_cast<float>(value.y);
+}
