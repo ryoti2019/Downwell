@@ -1,5 +1,8 @@
 #pragma once
+#include <memory>
 #include "../Scene/SceneBase.h"
+class ActorManager;
+class Player;
 
 class GameScene : public SceneBase
 {
@@ -7,7 +10,7 @@ class GameScene : public SceneBase
 public:
 
 	// コンストラクタ
-	GameScene(void);
+	GameScene();
 
 	// デストラクタ
 	~GameScene(void);
@@ -18,5 +21,11 @@ public:
 	void Release(void) override;
 
 private:
+
+	// アクターの管理クラス
+	std::shared_ptr<ActorManager> actorManager_;
+
+	// プレイヤー
+	std::vector<std::shared_ptr<Player>> player_;
 
 };

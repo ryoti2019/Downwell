@@ -66,9 +66,6 @@ private:
 	// 各種シーン
 	std::unique_ptr<SceneBase> scene_;
 
-	// アクター
-	std::unique_ptr<ActorManager> actorManager_;
-
 	// シーン遷移中判定
 	bool isSceneChanging_;
 

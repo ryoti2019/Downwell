@@ -67,12 +67,6 @@ void SceneManager::Update(void)
 		scene_->Update();
 	}
 
-	// ゲームシーンとゲームオーバーシーンのみ更新する
-	if (sceneId_ == SCENE_ID::GAME || sceneId_ == SCENE_ID::GAMEOVER)
-	{
-		actorManager_->Update();
-	}
-
 }
 
 void SceneManager::Draw(void)
@@ -87,12 +81,6 @@ void SceneManager::Draw(void)
 
 	// 描画
 	scene_->Draw();
-
-	// ゲームシーンとゲームオーバーシーンのみ描画する
-	if (sceneId_ == SCENE_ID::GAME || sceneId_ == SCENE_ID::GAMEOVER)
-	{
-		actorManager_->Draw();
-	}
 
 }
 
@@ -186,8 +174,6 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 		break;
 	case SCENE_ID::GAME:
 		scene_ = std::make_unique<GameScene>();
-		actorManager_ = std::make_unique<ActorManager>();
-		actorManager_->Init();
 		break;
 	}
 

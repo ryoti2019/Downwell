@@ -1,5 +1,5 @@
 #include "ActorManager.h"
-#include "../Object/Actor.h"
+#include "../Object/Player.h"
 
 ActorManager::ActorManager()
 {
@@ -11,21 +11,52 @@ ActorManager::~ActorManager()
 
 void ActorManager::Init()
 {
-	actor_ = std::make_unique<Actor>();
-	actor_->Init();
+	for (auto& data : actorData_)
+	{
+		for (auto& actor : data.second)
+		{
+			actor->Init();
+		}
+	}
 }
 
 void ActorManager::Update()
 {
-	actor_->Update();
+	for (auto& data : actorData_)
+	{
+		for (auto& actor : data.second)
+		{
+			actor->Update();
+		}
+	}
 }
 
 void ActorManager::Draw()
 {
-	actor_->Draw();
+	for (auto& data : actorData_)
+	{
+		for (auto& actor : data.second)
+		{
+			actor->Draw();
+		}
+	}
 }
 
 void ActorManager::Release()
 {
-	actor_->Release();
+	for (auto& data : actorData_)
+	{
+		for (auto& actor : data.second)
+		{
+			actor->Release();
+		}
+	}
+}
+
+std::vector<std::shared_ptr<Actor>> ActorManager::GetActorData()
+{
+	for (auto& data : actorData_)
+	{
+		return data.second;
+	}
 }

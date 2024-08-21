@@ -1,17 +1,15 @@
 #pragma once
 #include "../Common/Vector2F.h"
 
+enum class ActorType {
+	PLAYER,
+	ENEMY,
+	STAGE
+};
+
 class Actor
 {
 public:
-
-	enum class DIR
-	{
-		UP,
-		DOWN,
-		LEFT,
-		RIGHT
-	};
 
 	Actor(void);
 
@@ -22,12 +20,15 @@ public:
 	virtual void Draw(void);
 	virtual void Release(void);
 
-	virtual void GetHP(void);
-	virtual void DecreaseHP(int hp);
+	int GetHP() const { return hp_; }
+
+	void DecreaseHP(int hp);
+
+	ActorType GetActorType() const { return actorType_; }
 
 protected:
 
-#pragma region オブジェクトの座標や衝突判定
+#pragma region オブジェクトの情報
 
 	// 座標
 	Vector2F pos_;
@@ -50,9 +51,17 @@ protected:
 	// ステージと衝突しているか
 	bool isHitStage_;
 
+	// アクターの種類
+	ActorType actorType_;
+
 #pragma endregion
 
-	// アニメーション
+#pragma region アニメーション
+
+	// アニメーションカウンタ
+	int animCnt_;
+
+#pragma endregion
 
 	// 移動
 	virtual void Move(void);

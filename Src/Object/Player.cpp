@@ -26,6 +26,11 @@ void Player::Update(void)
 void Player::Draw(void)
 {
 
+	// ƒvƒŒƒCƒ„[‚Ì•`‰æ
+	DrawRotaGraph(pos_.x, pos_.y, 1.0, 0.0, playerImg_[(animCnt_ % IMAGE_NUM) / 10], true);
+
+	animCnt_++;
+
 }
 
 void Player::Release(void)

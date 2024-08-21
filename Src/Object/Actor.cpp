@@ -24,10 +24,6 @@ void Actor::Release(void)
 {
 }
 
-void Actor::GetHP(void)
-{
-}
-
 void Actor::DecreaseHP(int hp)
 {
 	hp_ -= hp;
