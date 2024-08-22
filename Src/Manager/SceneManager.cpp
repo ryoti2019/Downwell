@@ -100,17 +100,6 @@ void SceneManager::ChangeScene(SCENE_ID nextId)
 
 }
 
-SceneManager::SCENE_ID SceneManager::GetSceneID(void)
-{
-	return sceneId_;
-}
-
-float SceneManager::GetDeltaTime(void) const
-{
-	return 1.0f / 60.0f;
-	//return deltaTime_;
-}
-
 bool SceneManager::GetGamePad(void)
 {
 	return isGamePad_;

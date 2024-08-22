@@ -40,20 +40,31 @@ private:
 
 };
 
+// テンプレートでActorの継承先の型に置き換えることができる
 template<typename T>
 inline void ActorManager::CreateActor()
 {
 
+	// この中でActorたちの実体をまとめて作る
+
 	std::shared_ptr<Actor> actor = std::make_shared<T>();
+
+	// ポインタを使うときはクラッシュしないようにNULLチェックを行うようにする
+	if (!actor) return;
+
 	actor->Init();
 
+	// actorDataの中にすでに同じ型が生成されているかチェックする
 	auto actorElem = actorData_.find(actor->GetActorType());
+
+	// 生成されていない場合は、新しくvector配列の箱を作りその中に要素を入れていく
 	if ( actorElem == actorData_.end())
 	{
 		std::vector<std::shared_ptr<Actor>> data;
 		data.emplace_back(actor);
 		actorData_.emplace(actor->GetActorType(), data);
 	}
+	// 生成されている場合はすでにある箱の中に要素を入れていく
 	else
 	{
 		actorElem->second.emplace_back(actor);

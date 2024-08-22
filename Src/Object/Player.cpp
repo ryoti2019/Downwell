@@ -1,60 +1,208 @@
+#include <DxLib.h>
 #include "../Manager/ResourceManager.h"
 #include "../Manager/InputManager.h"
+#include "../Manager/GravityManager.h"
+#include "../Manager/ActorManager.h"
+#include "../Application.h"
 #include "Player.h"
+#include "Shot.h"
 
-Player::Player(void)
+Player::Player(std::shared_ptr<ActorManager> actorManager)
+{
+	actorManager_ = actorManager;
+}
+
+Player::~Player()
 {
 }
 
-Player::~Player(void)
+void Player::Init()
 {
-}
 
-void Player::Init(void)
-{
 	playerImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_IDLE).handleIds_;
+	actorType_ = ActorType::PLAYER;
+	pos_ = { Application::SCREEN_SIZE_X / 2,0};
+	speed_ = 10.0f;
+	animCnt_ = 0;
+
+	// ジャンプしているか
+	isJump_ = false;
+
+	// 床と衝突しているかどうか
+	isHitFloor_ = false;
+
+	// ジャンプの入力時間
+	cntJumpInput_ = INPUT_JUMP_FRAME;
+
+	// ジャンプ力
+	jumpPow_ = 0.0f;
+
+	isShot_ = false;
+
 }
 
-void Player::Update(void)
+void Player::Update()
 {
 
 	// 移動処理
 	Move();
 
+	// ジャンプ操作
+	ProcessJump();
+
+	// ジャンプ
+	Jump();
+
+	// 重力
+	jumpPow_ = GravityManager::GetInstance().AddGravity(jumpPow_);
+
+	// 足元の当たり判定
+	CollisionFoot();
+
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE) && isShot_)
+	{
+		ShotCreate();
+	}
+
 }
 
-void Player::Draw(void)
+void Player::Draw()
 {
 
+	animIdx_ = (animCnt_ / 10) % PLAYER_IMAGE_NUM;
+
 	// プレイヤーの描画
-	DrawRotaGraph(pos_.x, pos_.y, 1.0, 0.0, playerImg_[(animCnt_ % IMAGE_NUM) / 10], true);
+	if (dir_.x == (float)DIR::LEFT)
+	{
+		DrawRotaGraph(pos_.x, pos_.y, 2.0, 0.0, playerImg_[animIdx_], true);
+	}
+	else
+	{
+		DrawRotaGraph(pos_.x, pos_.y, 2.0, 0.0, playerImg_[animIdx_], true, true);
+	}
 
 	animCnt_++;
 
 }
 
-void Player::Release(void)
+void Player::Release()
 {
 }
 
-void Player::Move(void)
+void Player::Move()
 {
 
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_A))
 	{
 		dir_.x = -1.0f;
 		speed_ = 10.0f;
+		movePow_ = dir_.x * speed_;
+		pos_.x += movePow_;
 	}
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_D))
 	{
 		dir_.x = 1.0f;
 		speed_ = 10.0f;
+		movePow_ = dir_.x * speed_;
+		pos_.x += movePow_;
 	}
 
-	pos_.x = dir_.x * speed_;
+	movePow_ = 0.0f;
+}
+
+void Player::Jump()
+{
+	pos_.y += jumpPow_;
+}
+
+void Player::ProcessJump()
+{
+
+	// 地面に着地しているときジャンプできる
+	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_SPACE) && !isJump_)
+	{
+ 		isJump_ = true;
+		isPutJumpKey_ = true;
+	}
+
+	// 入力時間に応じてジャンプ量を変更する
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE) &&
+		cntJumpInput_ < INPUT_JUMP_FRAME && isPutJumpKey_)
+	{
+
+		cntJumpInput_++;
+
+		// ジャンプ力に分配加算
+ 		float pow = jumpPow_ - (MAX_JUMP_POW / static_cast<float>(INPUT_JUMP_FRAME));
+		SetJumpPow(pow);
+
+	}
+
+	// 2段ジャンプを禁止する
+	if (InputManager::GetInstance().IsTrgUp(KEY_INPUT_SPACE))
+	{
+		// ジャンプボタンを離された時
+		cntJumpInput_ = INPUT_JUMP_FRAME;
+		isShot_ = true;
+	}
 
 }
 
-void Player::Jump(void)
+void Player::SetJumpPow(float pow)
 {
+
+	// ジャンプ力を設定
+	jumpPow_ = pow;
+
+	// 重力がかかり過ぎるのを防ぐ
+	if (jumpPow_ > MAX_JUMP_POW)
+	{
+		jumpPow_ = MAX_JUMP_POW;
+	}
+
+}
+
+void Player::CollisionFoot(void)
+{
+
+	if (pos_.y >= Application::SCREEN_SIZE_Y / 2)
+	{
+		isHitFloor_ = true;
+		pos_.y = Application::SCREEN_SIZE_Y / 2;
+	}
+	else
+	{
+		isHitFloor_ = false;
+	}
+
+	// 接地判定(足元の衝突判定)
+	if (isHitFloor_)
+	{
+
+		// 地面についたのでジャンプをリセット
+		isJump_ = false;
+		SetJumpPow(0.0f);
+
+		// 接地したらジャンプカウンタを元に戻す
+		cntJumpInput_ = 0;
+
+		// ジャンプキーの押下判定
+		isPutJumpKey_ = false;
+
+		// 弾は打てない
+		isShot_ = false;
+
+	}
+	// 空中判定
+	else
+	{
+		// 接地していないので、ジャンプ判定にする
+		isJump_ = true;
+	}
+
+}
+
+void Player::ShotCreate()
+{
+
 }

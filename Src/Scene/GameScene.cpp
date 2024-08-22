@@ -2,6 +2,7 @@
 #include "../Manager/ActorManager.h"
 #include "GameScene.h"
 #include "../Object/Player.h"
+#include "../Object/Shot.h"
 
 GameScene::GameScene()
 {
@@ -20,6 +21,9 @@ void GameScene::Init(void)
 
 	actorManager_->CreateActor<Player>();
 	
+	// ’e‚Ì¶¬
+	actorManager_->CreateActor<Shot>();
+
 }
 
 void GameScene::Update(void)

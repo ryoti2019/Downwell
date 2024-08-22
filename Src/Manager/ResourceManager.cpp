@@ -2,6 +2,7 @@
 #include "../Application.h"
 #include "Resource.h"
 #include "ResourceManager.h"
+#include "../Object/Player.h"
 
 ResourceManager* ResourceManager::instance_ = nullptr;
 
@@ -24,8 +25,9 @@ void ResourceManager::Init(void)
 
 	Resource res;
 
-	// タイトルロゴ
-	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Idle.png");
+	// プレイヤーの待機アニメーション
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Idle.png",
+		Player::PLAYER_IMAGE_X_NUM,1,Player::PLAYER_IMAGE_SIZE,Player::PLAYER_IMAGE_SIZE);
 	resourcesMap_.emplace(SRC::PLAYER_IDLE, res);
 
 }

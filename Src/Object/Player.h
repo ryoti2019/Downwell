@@ -3,34 +3,69 @@
 #include <vector>
 #include "../Object/Actor.h"
 
+class ActorManager;
+
 class Player : public Actor
 {
 public:
 
-	static constexpr int IMAGE_NUM = 4;
+	// プレイヤー画像の総枚数
+	static constexpr int PLAYER_IMAGE_NUM = 4;
 
-	Player(void);
+	// プレイヤー画像の横の総枚数
+	static constexpr int PLAYER_IMAGE_X_NUM = 4;
 
-	~Player(void) override;
+	// プレイヤーの画像サイズ
+	static constexpr int PLAYER_IMAGE_SIZE = 32;
 
-	void Init(void) override;
-	void Update(void) override;
-	void Draw(void) override;
-	void Release(void) override;
+	//	ジャンプキー入力を受け付けるフレーム数
+	static constexpr int INPUT_JUMP_FRAME = 6;
 
-	std::vector<std::shared_ptr<Player>> GetPlayer();
+	// 最大ジャンプ力
+	static constexpr float MAX_JUMP_POW = 50.0f;
+
+	Player(std::shared_ptr<ActorManager> actorManager);
+
+	~Player() override;
+
+	void Init() override;
+	void Update() override;
+	void Draw() override;
+	void Release() override;
 
 private:
+
+	std::shared_ptr<ActorManager> actorManager_;
 
 	// プレイヤー画像
 	int* playerImg_;
 
-	void Move(void) override;
+	// ジャンプしているか
+	bool isJump_;
 
-	void Jump(void);
+	// ジャンプの入力時間
+	float cntJumpInput_;
 
+	// ジャンプキーの押下判定
+	bool isPutJumpKey_;
 
+	// ジャンプ力
+	float jumpPow_;
 
+	// 弾が打てるか
+	bool isShot_;
+
+	void Move() override;
+
+	void Jump();
+
+	void ProcessJump();
+
+	void SetJumpPow(float pow);
+
+	void CollisionFoot(void);
+
+	void ShotCreate();
 
 };
 

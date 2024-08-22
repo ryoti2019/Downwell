@@ -35,10 +35,10 @@ public:
 	void ChangeScene(SCENE_ID nextId);
 
 	// シーンIDの取得
-	SCENE_ID GetSceneID(void);
+	SCENE_ID GetSceneID(void) { return sceneId_; };
 
 	// デルタタイムの取得
-	float GetDeltaTime(void) const;
+	float GetDeltaTime(void) const { return deltaTime_; };
 
 	// ゲームパッドで操作するフラグを取得する
 	bool GetGamePad(void);
@@ -54,6 +54,9 @@ public:
 
 	// シーン遷移
 	void DoChangeScene(SCENE_ID sceneId);
+
+	// 今のシーンを取得
+	std::unique_ptr<SceneBase> GetNowScene() {return scene_;};
 
 private:
 

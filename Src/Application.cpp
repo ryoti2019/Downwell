@@ -2,6 +2,7 @@
 #include "Manager/ResourceManager.h"
 #include "Manager/InputManager.h"
 #include "Manager/SceneManager.h"
+#include "Manager/GravityManager.h"
 #include "Application.h"
 
 Application* Application::instance_ = nullptr;
@@ -29,7 +30,7 @@ void Application::Init(void)
 {
 
 	// アプリケーションの初期設定
-	SetWindowText("Vanquish A Monster");
+	SetWindowText("Downwell");
 
 	// ウィンドウサイズ
 	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);
@@ -53,6 +54,9 @@ void Application::Init(void)
 
 	// シーン管理初期化
 	SceneManager::CreateInstance();
+
+	// 重力管理初期化
+	GravityManager::CreateInstance();
 
 }
 

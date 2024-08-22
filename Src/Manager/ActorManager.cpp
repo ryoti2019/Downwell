@@ -11,20 +11,16 @@ ActorManager::~ActorManager()
 
 void ActorManager::Init()
 {
-	for (auto& data : actorData_)
-	{
-		for (auto& actor : data.second)
-		{
-			actor->Init();
-		}
-	}
 }
 
 void ActorManager::Update()
 {
 	for (auto& data : actorData_)
 	{
-		for (auto& actor : data.second)
+		// autoではなく、分かる型名はその型名で書く
+		// 前にconstをつけることで、Actorの箱を書き換えるのを止める
+		// ４バイト以上あるものは「&」をつけることで、４バイトになるので節約できる
+		for (const std::shared_ptr<Actor>& actor : data.second)
 		{
 			actor->Update();
 		}
@@ -35,7 +31,7 @@ void ActorManager::Draw()
 {
 	for (auto& data : actorData_)
 	{
-		for (auto& actor : data.second)
+		for (const std::shared_ptr<Actor>& actor : data.second)
 		{
 			actor->Draw();
 		}
@@ -46,7 +42,7 @@ void ActorManager::Release()
 {
 	for (auto& data : actorData_)
 	{
-		for (auto& actor : data.second)
+		for (const std::shared_ptr<Actor>& actor : data.second)
 		{
 			actor->Release();
 		}

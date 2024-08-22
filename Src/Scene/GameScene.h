@@ -2,7 +2,7 @@
 #include <memory>
 #include "../Scene/SceneBase.h"
 class ActorManager;
-class Player;
+//class Player;
 
 class GameScene : public SceneBase
 {
@@ -24,8 +24,5 @@ private:
 
 	// アクターの管理クラス
 	std::shared_ptr<ActorManager> actorManager_;
-
-	// プレイヤー
-	std::vector<std::shared_ptr<Player>> player_;
 
 };

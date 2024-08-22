@@ -7,6 +7,13 @@ enum class ActorType {
 	STAGE
 };
 
+enum class DIR {
+	UP = 1,
+	DOWN = -1,
+	LEFT = 1,
+	RIGHT = -1
+};
+
 class Actor
 {
 public:
@@ -42,14 +49,17 @@ protected:
 	// スピード
 	float speed_;
 
+	// 移動量
+	float movePow_;
+
 	// HP
 	int hp_;
 
 	// オブジェクトと衝突しているか
 	bool isHitObject_;
 
-	// ステージと衝突しているか
-	bool isHitStage_;
+	// 床と衝突しているか
+	bool isHitFloor_;
 
 	// アクターの種類
 	ActorType actorType_;
@@ -60,6 +70,9 @@ protected:
 
 	// アニメーションカウンタ
 	int animCnt_;
+
+	// アニメーション番号
+	int animIdx_;
 
 #pragma endregion
 
