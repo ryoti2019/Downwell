@@ -28,12 +28,15 @@ public:
 	template <typename actor>
 	void CreateActor();
 
-	std::vector<std::shared_ptr<Actor>> GetActorData();
+	std::shared_ptr<Actor> ActivateData(const ActorType type);
 
 private:
 
 	// すべてのアクターをまとめたデータ
-	std::unordered_map<ActorType, std::vector<std::shared_ptr<Actor>>> actorData_;
+	std::unordered_map<ActorType, std::vector<std::shared_ptr<Actor>>> activeActorData_;
+
+	// すべてのアクターをまとめたデータ
+	std::unordered_map<ActorType, std::vector<std::shared_ptr<Actor>>> deactiveActorData_;
 
 	//// プレイヤー
 	//std::shared_ptr<Player> player_;
@@ -55,14 +58,14 @@ inline void ActorManager::CreateActor()
 	actor->Init();
 
 	// actorDataの中にすでに同じ型が生成されているかチェックする
-	auto actorElem = actorData_.find(actor->GetActorType());
+	auto actorElem = deactiveActorData_.find(actor->GetActorType());
 
 	// 生成されていない場合は、新しくvector配列の箱を作りその中に要素を入れていく
-	if ( actorElem == actorData_.end())
+	if (actorElem == deactiveActorData_.end())
 	{
 		std::vector<std::shared_ptr<Actor>> data;
 		data.emplace_back(actor);
-		actorData_.emplace(actor->GetActorType(), data);
+		deactiveActorData_.emplace(actor->GetActorType(), data);
 	}
 	// 生成されている場合はすでにある箱の中に要素を入れていく
 	else

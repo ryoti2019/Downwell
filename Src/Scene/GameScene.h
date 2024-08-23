@@ -20,6 +20,8 @@ public:
 	void Draw(void) override;
 	void Release(void) override;
 
+	std::shared_ptr<ActorManager> GetActorManager() const {return actorManager_;}
+
 private:
 
 	// アクターの管理クラス

@@ -10,11 +10,6 @@ void GravityManager::CreateInstance()
 	}
 }
 
-GravityManager& GravityManager::GetInstance()
-{
-	return *instance_;
-}
-
 float GravityManager::AddGravity(float jumpPow)
 {
 	// Œ»İ‚ÌƒWƒƒƒ“ƒv—Í‚Éd—Í‚ğ‰Á‚¦‚é

@@ -13,9 +13,8 @@ public:
 	static void CreateInstance();
 
 	// 静的インスタンスの取得
-	static GravityManager& GetInstance();
+	static GravityManager& GetInstance() { return *instance_; };
 
-	void Init();
 	float AddGravity(float jumpPow);
 
 private:

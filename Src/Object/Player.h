@@ -24,7 +24,7 @@ public:
 	// 最大ジャンプ力
 	static constexpr float MAX_JUMP_POW = 50.0f;
 
-	Player(std::shared_ptr<ActorManager> actorManager);
+	Player();
 
 	~Player() override;
 
@@ -34,8 +34,6 @@ public:
 	void Release() override;
 
 private:
-
-	std::shared_ptr<ActorManager> actorManager_;
 
 	// プレイヤー画像
 	int* playerImg_;
@@ -63,9 +61,9 @@ private:
 
 	void SetJumpPow(float pow);
 
-	void CollisionFoot(void);
+	void CollisionFoot();
 
-	void ShotCreate();
+	void ShotAttack();
 
 };
 

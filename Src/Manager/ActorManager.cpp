@@ -15,11 +15,8 @@ void ActorManager::Init()
 
 void ActorManager::Update()
 {
-	for (auto& data : actorData_)
+	for (auto& data : deactiveActorData_)
 	{
-		// autoではなく、分かる型名はその型名で書く
-		// 前にconstをつけることで、Actorの箱を書き換えるのを止める
-		// ４バイト以上あるものは「&」をつけることで、４バイトになるので節約できる
 		for (const std::shared_ptr<Actor>& actor : data.second)
 		{
 			actor->Update();
@@ -29,7 +26,7 @@ void ActorManager::Update()
 
 void ActorManager::Draw()
 {
-	for (auto& data : actorData_)
+	for (auto& data : deactiveActorData_)
 	{
 		for (const std::shared_ptr<Actor>& actor : data.second)
 		{
@@ -40,7 +37,7 @@ void ActorManager::Draw()
 
 void ActorManager::Release()
 {
-	for (auto& data : actorData_)
+	for (auto& data : deactiveActorData_)
 	{
 		for (const std::shared_ptr<Actor>& actor : data.second)
 		{
@@ -49,10 +46,27 @@ void ActorManager::Release()
 	}
 }
 
-std::vector<std::shared_ptr<Actor>> ActorManager::GetActorData()
+std::shared_ptr<Actor> ActorManager::ActivateData(const ActorType type)
 {
-	for (auto& data : actorData_)
-	{
-		return data.second;
-	}
+	// actorDataの中にすでに同じ型が生成されているかチェックする
+	auto deactorElem = deactiveActorData_.find(type);
+
+	if (deactorElem == deactiveActorData_.end()) return nullptr; 
+	//if (actorElem == activeActorData_.end())
+	//{
+	//}
+	const int a = 1;
+
+	const std::vector<std::shared_ptr<Actor>>& deactiveData = deactiveActorData_[type];
+	std::vector<std::shared_ptr<Actor>> activeData = activeActorData_[type];
+
+	std::shared_ptr<Actor> active = deactiveData.front();
+	deactiveActorData_[type].erase(deactiveActorData_[type].begin());
+
+	active->SetIsActive(true);
+
+ 	activeActorData_[type].emplace_back(active);
+
+	return active;
+
 }

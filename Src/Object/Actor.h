@@ -3,6 +3,7 @@
 
 enum class ActorType {
 	PLAYER,
+	SHOT,
 	ENEMY,
 	STAGE
 };
@@ -32,6 +33,12 @@ public:
 	void DecreaseHP(int hp);
 
 	ActorType GetActorType() const { return actorType_; }
+
+	bool GetIsActive() const { return isActive_; }
+
+	void SetIsActive(bool isActive) { isActive_ = isActive; }
+
+	const Vector2F& GetPos() const { return pos_; }
 
 protected:
 
@@ -63,6 +70,9 @@ protected:
 
 	// アクターの種類
 	ActorType actorType_;
+
+	// アクティブ状態かどうか
+	bool isActive_;
 
 #pragma endregion
 

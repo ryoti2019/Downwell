@@ -3,6 +3,7 @@
 #include <chrono>
 class SceneBase;
 class ActorManager;
+class GameScene;
 
 class SceneManager
 {
@@ -22,7 +23,7 @@ public:
 	static void CreateInstance(void);
 
 	// インスタンスの取得
-	static SceneManager& GetInstance(void);
+	static SceneManager& GetInstance(void) { return *instance_; };
 
 	void Init(void);
 	void Update(void);
@@ -40,23 +41,11 @@ public:
 	// デルタタイムの取得
 	float GetDeltaTime(void) const { return deltaTime_; };
 
-	// ゲームパッドで操作するフラグを取得する
-	bool GetGamePad(void);
-
-	// ゲームパッドで操作するフラグを取得する
-	void SetGamePad(bool isPad);
-
-	// 操作説明のフラグの取得
-	bool GetIsOperation(void);
-
-	// 操作説明のフラグの取得
-	void SetIsOperation(bool isOp);
-
 	// シーン遷移
 	void DoChangeScene(SCENE_ID sceneId);
 
 	// 今のシーンを取得
-	std::unique_ptr<SceneBase> GetNowScene() {return scene_;};
+	std::shared_ptr<SceneBase> GetNowScene() {return scene_;};
 
 private:
 
@@ -67,7 +56,7 @@ private:
 	SCENE_ID waitSceneId_;
 
 	// 各種シーン
-	std::unique_ptr<SceneBase> scene_;
+	std::shared_ptr<SceneBase> scene_;
 
 	// シーン遷移中判定
 	bool isSceneChanging_;

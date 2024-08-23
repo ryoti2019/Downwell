@@ -19,10 +19,14 @@ void GameScene::Init(void)
 	actorManager_ = std::make_shared<ActorManager>();
 	actorManager_->Init();
 
+	// ƒvƒŒƒCƒ„[‚ð¶¬
 	actorManager_->CreateActor<Player>();
 	
 	// ’e‚Ì¶¬
-	actorManager_->CreateActor<Shot>();
+	for (int i = 0; i < 50; i++)
+	{
+		actorManager_->CreateActor<Shot>();
+	}
 
 }
 

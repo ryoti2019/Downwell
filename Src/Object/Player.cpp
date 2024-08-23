@@ -1,15 +1,16 @@
 #include <DxLib.h>
 #include "../Manager/ResourceManager.h"
+#include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/GravityManager.h"
 #include "../Manager/ActorManager.h"
 #include "../Application.h"
+#include "../Scene/GameScene.h"
 #include "Player.h"
 #include "Shot.h"
 
-Player::Player(std::shared_ptr<ActorManager> actorManager)
+Player::Player()
 {
-	actorManager_ = actorManager;
 }
 
 Player::~Player()
@@ -61,7 +62,7 @@ void Player::Update()
 
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE) && isShot_)
 	{
-		ShotCreate();
+		ShotAttack();
 	}
 
 }
@@ -202,7 +203,20 @@ void Player::CollisionFoot(void)
 
 }
 
-void Player::ShotCreate()
+void Player::ShotAttack()
 {
+	// 基底クラスから使いたい型へキャストする
+	std::shared_ptr<GameScene> gameScene =
+		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
+
+	// NULLチェック
+	if (!gameScene) { return; };
+
+	// アクターマネージャーを取得
+	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
+
+  	std::shared_ptr<Actor> shot = actorManager->ActivateData(ActorType::SHOT);
+	
+	shot->Update();
 
 }

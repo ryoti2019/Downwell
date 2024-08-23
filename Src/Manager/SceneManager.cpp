@@ -18,11 +18,6 @@ void SceneManager::CreateInstance()
 	instance_->Init();
 }
 
-SceneManager& SceneManager::GetInstance(void)
-{
-	return *instance_;
-}
-
 void SceneManager::Init(void)
 {
 
@@ -98,26 +93,6 @@ void SceneManager::ChangeScene(SCENE_ID nextId)
 
 	isSceneChanging_ = true;
 
-}
-
-bool SceneManager::GetGamePad(void)
-{
-	return isGamePad_;
-}
-
-void SceneManager::SetGamePad(bool isPad)
-{
-	isGamePad_ = isPad;
-}
-
-bool SceneManager::GetIsOperation(void)
-{
-	return isOperation_;
-}
-
-void SceneManager::SetIsOperation(bool isOp)
-{
-	isOperation_ = isOp;
 }
 
 SceneManager::SceneManager(void)
