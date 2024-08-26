@@ -9,10 +9,10 @@ enum class ActorType {
 };
 
 enum class DIR {
-	UP = 1,
-	DOWN = -1,
-	LEFT = 1,
-	RIGHT = -1
+	UP = -1,
+	DOWN = 1,
+	LEFT = -1,
+	RIGHT = 1
 };
 
 class Actor
@@ -23,14 +23,14 @@ public:
 
 	virtual ~Actor(void);
 
-	virtual void Init(void);
+	virtual void Init(const Vector2F& pos);
 	virtual void Update(void);
 	virtual void Draw(void);
 	virtual void Release(void);
 
 	int GetHP() const { return hp_; }
 
-	void DecreaseHP(int hp);
+	void DecreaseHP(int hp) { hp_ -= hp; };
 
 	ActorType GetActorType() const { return actorType_; }
 
@@ -39,6 +39,11 @@ public:
 	void SetIsActive(bool isActive) { isActive_ = isActive; }
 
 	const Vector2F& GetPos() const { return pos_; }
+
+	void SetPos(Vector2F pos) { pos_ = pos; };
+
+	// 生きているかどうか
+	bool IsAlive(void) const { return isAlive_; };
 
 protected:
 
@@ -74,6 +79,9 @@ protected:
 	// アクティブ状態かどうか
 	bool isActive_;
 
+	// 生きているかどうか
+	bool isAlive_;
+
 #pragma endregion
 
 #pragma region アニメーション
@@ -91,8 +99,5 @@ protected:
 
 	// 衝突判定
 	virtual void Collision(void);
-
-	// 生きているかどうか
-	bool IsAlive(void);
 
 };

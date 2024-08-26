@@ -1,8 +1,9 @@
 #pragma once
 #include <memory>
+#include <vector>
 #include "../Scene/SceneBase.h"
 class ActorManager;
-//class Player;
+class Stage;
 
 class GameScene : public SceneBase
 {
@@ -26,5 +27,8 @@ private:
 
 	// アクターの管理クラス
 	std::shared_ptr<ActorManager> actorManager_;
+
+	// ステージ
+	std::vector<std::unique_ptr<Stage>> stage_;
 
 };

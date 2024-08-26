@@ -17,7 +17,7 @@ Player::~Player()
 {
 }
 
-void Player::Init()
+void Player::Init(const Vector2F& pos)
 {
 
 	playerImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_IDLE).handleIds_;
@@ -40,6 +40,10 @@ void Player::Init()
 
 	isShot_ = false;
 
+	coolTime_ = 0.0f;
+
+	Actor::Init(pos);
+
 }
 
 void Player::Update()
@@ -60,10 +64,18 @@ void Player::Update()
 	// 足元の当たり判定
 	CollisionFoot();
 
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE) && isShot_)
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE) && isShot_ && coolTime_ <= 0.0f)
 	{
 		ShotAttack();
+		coolTime_ = SHOT_COOL_TIME;
 	}
+
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE) && jumpPow_ >= 0.0f)
+	{
+		jumpPow_ = 0.0f;
+	}
+
+	coolTime_ -= SceneManager::GetInstance().GetDeltaTime();
 
 }
 
@@ -73,7 +85,7 @@ void Player::Draw()
 	animIdx_ = (animCnt_ / 10) % PLAYER_IMAGE_NUM;
 
 	// プレイヤーの描画
-	if (dir_.x == (float)DIR::LEFT)
+	if (dir_.x == (float)DIR::RIGHT)
 	{
 		DrawRotaGraph(pos_.x, pos_.y, 2.0, 0.0, playerImg_[animIdx_], true);
 	}
@@ -95,14 +107,14 @@ void Player::Move()
 
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_A))
 	{
-		dir_.x = -1.0f;
+		dir_.x = (int)DIR::LEFT;
 		speed_ = 10.0f;
 		movePow_ = dir_.x * speed_;
 		pos_.x += movePow_;
 	}
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_D))
 	{
-		dir_.x = 1.0f;
+		dir_.x = (int)DIR::RIGHT;
 		speed_ = 10.0f;
 		movePow_ = dir_.x * speed_;
 		pos_.x += movePow_;
@@ -205,18 +217,19 @@ void Player::CollisionFoot(void)
 
 void Player::ShotAttack()
 {
+
 	// 基底クラスから使いたい型へキャストする
 	std::shared_ptr<GameScene> gameScene =
 		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
 
 	// NULLチェック
-	if (!gameScene) { return; };
+	if (!gameScene) return;
 
 	// アクターマネージャーを取得
 	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
 
-  	std::shared_ptr<Actor> shot = actorManager->ActivateData(ActorType::SHOT);
-	
-	shot->Update();
+  	std::shared_ptr<Actor> shot = actorManager->ActiveData(ActorType::SHOT,{pos_.x,pos_.y + 32.0f});
+
+  	shot->Update();
 
 }

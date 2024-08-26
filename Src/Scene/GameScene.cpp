@@ -1,8 +1,10 @@
 #include <DxLib.h>
 #include "../Manager/ActorManager.h"
+#include "../Application.h"
 #include "GameScene.h"
 #include "../Object/Player.h"
 #include "../Object/Shot.h"
+#include "../Object/Stage.h"
 
 GameScene::GameScene()
 {
@@ -21,11 +23,19 @@ void GameScene::Init(void)
 
 	// ÉvÉåÉCÉÑÅ[Çê∂ê¨
 	actorManager_->CreateActor<Player>();
-	
-	// íeÇÃê∂ê¨
+	actorManager_->ActiveData(ActorType::PLAYER, { Application::SCREEN_SIZE_X / 2,0 });
+
+	// íeÇê∂ê¨
 	for (int i = 0; i < 50; i++)
 	{
 		actorManager_->CreateActor<Shot>();
+	}
+
+	stage_.emplace_back();
+
+	for (auto& stage : stage_)
+	{
+		stage = std::make_unique<Stage>();
 	}
 
 }

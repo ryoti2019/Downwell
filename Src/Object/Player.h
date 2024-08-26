@@ -15,7 +15,7 @@ public:
 	// プレイヤー画像の横の総枚数
 	static constexpr int PLAYER_IMAGE_X_NUM = 4;
 
-	// プレイヤーの画像サイズ
+	// プレイヤー画像サイズ
 	static constexpr int PLAYER_IMAGE_SIZE = 32;
 
 	//	ジャンプキー入力を受け付けるフレーム数
@@ -24,11 +24,14 @@ public:
 	// 最大ジャンプ力
 	static constexpr float MAX_JUMP_POW = 50.0f;
 
+	// 弾を打てるまでのクールタイム
+	static constexpr float SHOT_COOL_TIME = 0.1f;
+
 	Player();
 
 	~Player() override;
 
-	void Init() override;
+	void Init(const Vector2F& pos) override;
 	void Update() override;
 	void Draw() override;
 	void Release() override;
@@ -52,6 +55,9 @@ private:
 
 	// 弾が打てるか
 	bool isShot_;
+
+	// 弾を打つまでのクールタイムカウンタ
+	float coolTime_;
 
 	void Move() override;
 

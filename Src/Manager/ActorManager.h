@@ -25,10 +25,20 @@ public:
 	void Draw();
 	void Release();
 	
+	// Actorの派生クラスの実体の作成
 	template <typename actor>
 	void CreateActor();
 
-	std::shared_ptr<Actor> ActivateData(const ActorType type);
+	// アクティブになったものを格納
+	std::shared_ptr<Actor> ActiveData(const ActorType type, const Vector2F& pos);
+
+	// 非アクティブになったものを格納
+	void DeactiveData(const std::shared_ptr<Actor>& actor);
+
+	const auto& const GetActiveActorData()
+	{
+		return deactiveActorData_;
+	};
 
 private:
 
@@ -37,9 +47,6 @@ private:
 
 	// すべてのアクターをまとめたデータ
 	std::unordered_map<ActorType, std::vector<std::shared_ptr<Actor>>> deactiveActorData_;
-
-	//// プレイヤー
-	//std::shared_ptr<Player> player_;
 
 };
 
@@ -55,13 +62,14 @@ inline void ActorManager::CreateActor()
 	// ポインタを使うときはクラッシュしないようにNULLチェックを行うようにする
 	if (!actor) return;
 
-	actor->Init();
+	const Vector2F pos = { 0.0f,0.0f };
+	actor->Init(pos);
 
-	// actorDataの中にすでに同じ型が生成されているかチェックする
-	auto actorElem = deactiveActorData_.find(actor->GetActorType());
+	// deactiveActorData_の中にすでに同じ型が生成されているかチェックする
+	auto deactorElem = deactiveActorData_.find(actor->GetActorType());
 
 	// 生成されていない場合は、新しくvector配列の箱を作りその中に要素を入れていく
-	if (actorElem == deactiveActorData_.end())
+	if (deactorElem == deactiveActorData_.end())
 	{
 		std::vector<std::shared_ptr<Actor>> data;
 		data.emplace_back(actor);
@@ -70,7 +78,7 @@ inline void ActorManager::CreateActor()
 	// 生成されている場合はすでにある箱の中に要素を入れていく
 	else
 	{
-		actorElem->second.emplace_back(actor);
+		deactorElem->second.emplace_back(actor);
 	}
 
 }

@@ -3,6 +3,7 @@
 #include "Resource.h"
 #include "ResourceManager.h"
 #include "../Object/Player.h"
+#include "../Object/Shot.h"
 
 ResourceManager* ResourceManager::instance_ = nullptr;
 
@@ -26,9 +27,15 @@ void ResourceManager::Init(void)
 	Resource res;
 
 	// プレイヤーの待機アニメーション
-	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Idle.png",
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Player/Idle.png",
 		Player::PLAYER_IMAGE_X_NUM,1,Player::PLAYER_IMAGE_SIZE,Player::PLAYER_IMAGE_SIZE);
 	resourcesMap_.emplace(SRC::PLAYER_IDLE, res);
+
+	// 弾のアニメーション
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Player/Shot.png",
+		Shot::SHOT_IMAGE_X_NUM,1,Shot::SHOT_IMAGE_X_SIZE,Shot::SHOT_IMAGE_Y_SIZE);
+	resourcesMap_.emplace(SRC::SHOT, res);
+
 
 }
 
