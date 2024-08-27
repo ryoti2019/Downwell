@@ -3,6 +3,7 @@
 #include <vector>
 #include "../Scene/SceneBase.h"
 class ActorManager;
+class CollisionManager;
 class Stage;
 
 class GameScene : public SceneBase
@@ -11,24 +12,31 @@ class GameScene : public SceneBase
 public:
 
 	// コンストラクタ
-	GameScene();
+	GameScene() = default;
 
 	// デストラクタ
-	~GameScene(void);
+	~GameScene() = default;
 
-	void Init(void) override;
-	void Update(void) override;
-	void Draw(void) override;
-	void Release(void) override;
+	void Init() override;
+	void Update() override;
+	void Draw() override;
+	void Release() override;
 
-	std::shared_ptr<ActorManager> GetActorManager() const {return actorManager_;}
+	const std::shared_ptr<ActorManager>& GetActorManager() const { return actorManager_; }
+
+	const std::shared_ptr<CollisionManager>& GetCollisionManager() const { return collisionManager_; }
+
+	const std::shared_ptr<Stage>& GetStage() const { return stage_; }
 
 private:
 
 	// アクターの管理クラス
 	std::shared_ptr<ActorManager> actorManager_;
 
+	// 衝突判定の管理クラス
+	std::shared_ptr<CollisionManager> collisionManager_;
+
 	// ステージ
-	std::vector<std::unique_ptr<Stage>> stage_;
+	std::shared_ptr<Stage> stage_;
 
 };

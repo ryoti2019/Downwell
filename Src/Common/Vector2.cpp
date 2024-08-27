@@ -1,7 +1,7 @@
 #include "Vector2.h"
 
 // コンストラクタ
-Vector2::Vector2(void)
+Vector2::Vector2()
 {
 	x = 0;
 	y = 0;
@@ -14,6 +14,6 @@ Vector2::Vector2(int vX, int vY)
 	y = vY;
 }
 
-Vector2::~Vector2(void)
+Vector2::~Vector2()
 {
 }

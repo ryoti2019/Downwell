@@ -54,7 +54,10 @@ private:
 	float jumpPow_;
 
 	// 弾が打てるか
-	bool isShot_;
+	bool isCanShot_;
+
+	// 弾を打っているか
+	bool isDoingShot_;
 
 	// 弾を打つまでのクールタイムカウンタ
 	float coolTime_;
@@ -70,6 +73,8 @@ private:
 	void CollisionFoot();
 
 	void ShotAttack();
+
+	void CollisionStage();
 
 };
 

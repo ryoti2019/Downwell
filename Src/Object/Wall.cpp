@@ -1,15 +1,11 @@
+#include <DxLib.h>
+#include "../Manager/ResourceManager.h"
 #include "Wall.h"
-
-Wall::Wall()
-{
-}
-
-Wall::~Wall()
-{
-}
 
 void Wall::Init(const Vector2F& pos)
 {
+	img_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::MAP_CHIP).handleIds_;
+	actorType_ = ActorType::WALL;
 	Actor::Init(pos);
 }
 

@@ -6,21 +6,21 @@ class SceneBase
 public:
 
 	// コンストラクタ
-	SceneBase(void);
+	SceneBase();
 
 	// デストラクタ
-	virtual ~SceneBase(void) = 0;
+	virtual ~SceneBase() = 0;
 
 	// 初期化処理
-	virtual void Init(void) = 0;
+	virtual void Init() = 0;
 
 	// 更新ステップ
-	virtual void Update(void) = 0;
+	virtual void Update() = 0;
 
 	// 描画処理
-	virtual void Draw(void) = 0;
+	virtual void Draw() = 0;
 
 	// 解放処理
-	virtual void Release(void) = 0;
+	virtual void Release() = 0;
 
 };

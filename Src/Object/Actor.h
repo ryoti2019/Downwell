@@ -1,11 +1,12 @@
 #pragma once
+#include <memory>
 #include "../Common/Vector2F.h"
 
 enum class ActorType {
 	PLAYER,
 	SHOT,
 	ENEMY,
-	STAGE
+	WALL,
 };
 
 enum class DIR {
@@ -15,26 +16,26 @@ enum class DIR {
 	RIGHT = 1
 };
 
-class Actor
+class Actor : public std::enable_shared_from_this<Actor>
 {
 public:
 
-	Actor(void);
+	Actor() = default;
 
-	virtual ~Actor(void);
+	virtual ~Actor() = default;
 
 	virtual void Init(const Vector2F& pos);
-	virtual void Update(void);
-	virtual void Draw(void);
-	virtual void Release(void);
+	virtual void Update();
+	virtual void Draw();
+	virtual void Release();
 
 	int GetHP() const { return hp_; }
 
 	void DecreaseHP(int hp) { hp_ -= hp; };
 
-	ActorType GetActorType() const { return actorType_; }
+	const ActorType GetActorType() const { return actorType_; }
 
-	bool GetIsActive() const { return isActive_; }
+	const bool GetIsActive() const { return isActive_; }
 
 	void SetIsActive(bool isActive) { isActive_ = isActive; }
 
@@ -43,7 +44,7 @@ public:
 	void SetPos(Vector2F pos) { pos_ = pos; };
 
 	// 生きているかどうか
-	bool IsAlive(void) const { return isAlive_; };
+	const bool GetIsAlive() const { return isAlive_; };
 
 protected:
 
@@ -76,11 +77,11 @@ protected:
 	// アクターの種類
 	ActorType actorType_;
 
-	// アクティブ状態かどうか
-	bool isActive_;
-
 	// 生きているかどうか
 	bool isAlive_;
+
+	// 画像
+	int* img_;
 
 #pragma endregion
 
@@ -95,9 +96,16 @@ protected:
 #pragma endregion
 
 	// 移動
-	virtual void Move(void);
+	virtual void Move();
 
 	// 衝突判定
-	virtual void Collision(void);
+	virtual void Collision();
+
+	const std::shared_ptr<Actor>& GetThis() { return shared_from_this(); }
+
+private:
+
+	// アクティブ状態かどうか
+	bool isActive_;
 
 };

@@ -7,15 +7,15 @@ class TitleScene : public SceneBase
 public:
 
 	// コンストラクタ
-	TitleScene(void);
+	TitleScene();
 
 	// デストラクタ
-	~TitleScene(void);
+	~TitleScene();
 
-	void Init(void) override;
-	void Update(void) override;
-	void Draw(void) override;
-	void Release(void) override;
+	void Init() override;
+	void Update() override;
+	void Draw() override;
+	void Release() override;
 
 private:
 

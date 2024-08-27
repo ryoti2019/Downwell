@@ -4,6 +4,7 @@
 #include "ResourceManager.h"
 #include "../Object/Player.h"
 #include "../Object/Shot.h"
+#include "../Object/Stage.h"
 
 ResourceManager* ResourceManager::instance_ = nullptr;
 
@@ -35,6 +36,11 @@ void ResourceManager::Init(void)
 	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Player/Shot.png",
 		Shot::SHOT_IMAGE_X_NUM,1,Shot::SHOT_IMAGE_X_SIZE,Shot::SHOT_IMAGE_Y_SIZE);
 	resourcesMap_.emplace(SRC::SHOT, res);
+
+	// ステージのマップチップ
+	res = Resource(Resource::TYPE::IMGS, Application::PATH_IMAGE + "Stage/MapTextures.png",
+		Stage::STAGE_IMAGE_X_NUM, 1, Stage::STAGE_IMAGE_SIZE, Stage::STAGE_IMAGE_SIZE);
+	resourcesMap_.emplace(SRC::MAP_CHIP, res);
 
 
 }

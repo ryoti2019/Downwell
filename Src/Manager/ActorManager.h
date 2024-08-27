@@ -17,8 +17,8 @@ class ActorManager
 
 public:
 
-	ActorManager();
-	~ActorManager();
+	ActorManager() = default;
+	~ActorManager() = default;
 
 	void Init();
 	void Update();
@@ -35,10 +35,7 @@ public:
 	// 非アクティブになったものを格納
 	void DeactiveData(const std::shared_ptr<Actor>& actor);
 
-	const auto& const GetActiveActorData()
-	{
-		return deactiveActorData_;
-	};
+	const auto& const GetActiveActorData() { return activeActorData_; };
 
 private:
 

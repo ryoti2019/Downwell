@@ -1,14 +1,6 @@
 #include "ActorManager.h"
 #include "../Object/Player.h"
 
-ActorManager::ActorManager()
-{
-}
-
-ActorManager::~ActorManager()
-{
-}
-
 void ActorManager::Init()
 {
 }
@@ -30,7 +22,7 @@ void ActorManager::Update()
 				DeactiveData(actor);
 
 				// 非アクティブになったものを削除
-				data.second.erase(data.second.begin() += num);
+ 				data.second.erase(data.second.begin() += num);
 			}
 			num++;
 		}
@@ -92,7 +84,19 @@ std::shared_ptr<Actor> ActorManager::ActiveData(const ActorType type, const Vect
 	active->SetIsActive(true);
 
 	// activeActorData_に格納
- 	activeActorData_[type].emplace_back(active);
+	auto actorElem = activeActorData_.find(type);
+
+	if (actorElem == activeActorData_.end())
+	{
+		std::vector<std::shared_ptr<Actor>> data;
+		data.emplace_back(active);
+		activeActorData_.emplace(type, data);
+	}
+	// 生成されている場合はすでにある箱の中に要素を入れていく
+	else
+	{
+		actorElem->second.emplace_back(active);
+	}
 
 	// アクティブ状態になったものを返す
 	return active;

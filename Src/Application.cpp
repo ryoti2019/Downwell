@@ -12,7 +12,7 @@ const std::string Application::PATH_MODEL = "Data/Model/";
 const std::string Application::PATH_EFFECT = "Data/Effect/";
 const std::string Application::PATH_MUSIC = "Data/Music/";
 
-void Application::CreateInstance(void)
+void Application::CreateInstance()
 {
 	if (instance_ == nullptr)
 	{
@@ -21,12 +21,12 @@ void Application::CreateInstance(void)
 	instance_->Init();
 }
 
-Application& Application::GetInstance(void)
+Application& Application::GetInstance()
 {
 	return *instance_;
 }
 
-void Application::Init(void)
+void Application::Init()
 {
 
 	// アプリケーションの初期設定
@@ -60,7 +60,7 @@ void Application::Init(void)
 
 }
 
-void Application::Run(void)
+void Application::Run()
 {
 
 	auto& inputManager = InputManager::GetInstance();
@@ -81,7 +81,7 @@ void Application::Run(void)
 
 }
 
-void Application::Destroy(void)
+void Application::Destroy()
 {
 
 	InputManager::GetInstance().Destroy();
@@ -98,17 +98,17 @@ void Application::Destroy(void)
 
 }
 
-bool Application::IsInitFail(void) const
+bool Application::IsInitFail() const
 {
 	return isInitFail_;
 }
 
-bool Application::IsReleaseFail(void) const
+bool Application::IsReleaseFail() const
 {
 	return isReleaseFail_;
 }
 
-Application::Application(void)
+Application::Application()
 {
 	isInitFail_ = false;
 	isReleaseFail_ = false;

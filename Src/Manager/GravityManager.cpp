@@ -17,7 +17,7 @@ float GravityManager::AddGravity(float jumpPow)
 	return pow;
 }
 
-GravityManager::GravityManager(void)
+GravityManager::GravityManager()
 {
 }
 

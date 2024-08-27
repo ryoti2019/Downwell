@@ -1,25 +1,25 @@
 #include "SceneBase.h"
 
-SceneBase::SceneBase(void)
+SceneBase::SceneBase()
 {
 }
 
-SceneBase::~SceneBase(void)
+SceneBase::~SceneBase()
 {
 }
 
-void SceneBase::Init(void)
+void SceneBase::Init()
 {
 }
 
-void SceneBase::Update(void)
+void SceneBase::Update()
 {
 }
 
-void SceneBase::Draw(void)
+void SceneBase::Draw()
 {
 }
 
-void SceneBase::Release(void)
+void SceneBase::Release()
 {
 }

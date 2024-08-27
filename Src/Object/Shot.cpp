@@ -17,7 +17,6 @@ void Shot::Init(const Vector2F& pos)
 	shotImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::SHOT).handleIds_;
 
 	actorType_ = ActorType::SHOT;
-	isActive_ = false;
 	isAlive_ = false;
 	speed_ = SHOT_SPEED;
 
@@ -33,14 +32,11 @@ void Shot::Init(const Vector2F& pos)
 void Shot::Update()
 {
 
-	if (isActive_)
-	{
-		Move();
-	}
+	Move();
 
 	if (aliveCnt_ >= ALIVE_TIME)
 	{
-		isActive_ = false;
+		SetIsActive(false);
 	}
 
 	aliveCnt_ += SceneManager::GetInstance().GetDeltaTime();
@@ -51,8 +47,8 @@ void Shot::Draw()
 {
 	animIdx_ = (animCnt_ / 10) % SHOT_IMAGE_NUM;
 
-	// ƒvƒŒƒCƒ„[‚Ì•`‰æ
-	if (isActive_)
+	// ’e‚Ì•`‰æ
+	if (GetIsActive())
 	{
 		DrawRotaGraph(pos_.x, pos_.y, 2.0, 0.0, shotImg_[animIdx_], true);
 	}

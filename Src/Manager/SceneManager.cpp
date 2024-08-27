@@ -18,7 +18,7 @@ void SceneManager::CreateInstance()
 	instance_->Init();
 }
 
-void SceneManager::Init(void)
+void SceneManager::Init()
 {
 
 	sceneId_ = SCENE_ID::TITLE;
@@ -43,7 +43,7 @@ void SceneManager::Init(void)
 
 }
 
-void SceneManager::Update(void)
+void SceneManager::Update()
 {
 
 	if (scene_ == nullptr)
@@ -64,7 +64,7 @@ void SceneManager::Update(void)
 
 }
 
-void SceneManager::Draw(void)
+void SceneManager::Draw()
 {
 
 	// 描画先グラフィック領域の指定
@@ -79,7 +79,7 @@ void SceneManager::Draw(void)
 
 }
 
-void SceneManager::Destroy(void)
+void SceneManager::Destroy()
 {
 	delete instance_;
 }
@@ -95,7 +95,7 @@ void SceneManager::ChangeScene(SCENE_ID nextId)
 
 }
 
-SceneManager::SceneManager(void)
+SceneManager::SceneManager()
 {
 
 	sceneId_ = SCENE_ID::NONE;
@@ -110,7 +110,7 @@ SceneManager::SceneManager(void)
 
 }
 
-void SceneManager::ResetDeltaTime(void)
+void SceneManager::ResetDeltaTime()
 {
 	deltaTime_ = 0.016f;
 	preTime_ = std::chrono::system_clock::now();

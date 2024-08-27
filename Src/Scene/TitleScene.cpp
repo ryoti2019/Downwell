@@ -3,19 +3,19 @@
 #include "../Manager/InputManager.h"
 #include "TitleScene.h"
 
-TitleScene::TitleScene(void)
+TitleScene::TitleScene()
 {
 }
 
-TitleScene::~TitleScene(void)
+TitleScene::~TitleScene()
 {
 }
 
-void TitleScene::Init(void)
+void TitleScene::Init()
 {
 }
 
-void TitleScene::Update(void)
+void TitleScene::Update()
 {
 
 	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_SPACE))
@@ -25,13 +25,13 @@ void TitleScene::Update(void)
 
 }
 
-void TitleScene::Draw(void)
+void TitleScene::Draw()
 {
 
 	DrawFormatString(0, 0, 0xff0000, "TitleScene");
 
 }
 
-void TitleScene::Release(void)
+void TitleScene::Release()
 {
 }

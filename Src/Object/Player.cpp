@@ -4,6 +4,7 @@
 #include "../Manager/InputManager.h"
 #include "../Manager/GravityManager.h"
 #include "../Manager/ActorManager.h"
+#include "../Manager/CollisionManager.h"
 #include "../Application.h"
 #include "../Scene/GameScene.h"
 #include "Player.h"
@@ -11,6 +12,21 @@
 
 Player::Player()
 {
+	// 基底クラスから使いたい型へキャストする
+	std::shared_ptr<GameScene> gameScene =
+		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
+
+	// NULLチェック
+	if (!gameScene) return;
+
+	// アクターマネージャーを取得
+	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
+
+	// 弾を生成
+	for (int i = 0; i < 50; i++)
+	{
+		actorManager->CreateActor<Shot>();
+	}
 }
 
 Player::~Player()
@@ -22,7 +38,7 @@ void Player::Init(const Vector2F& pos)
 
 	playerImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_IDLE).handleIds_;
 	actorType_ = ActorType::PLAYER;
-	pos_ = { Application::SCREEN_SIZE_X / 2,0};
+	pos_ = { Application::SCREEN_SIZE_X / 2,0 };
 	speed_ = 10.0f;
 	animCnt_ = 0;
 
@@ -38,9 +54,26 @@ void Player::Init(const Vector2F& pos)
 	// ジャンプ力
 	jumpPow_ = 0.0f;
 
-	isShot_ = false;
+	isCanShot_ = false;
+	isDoingShot_ = false;
 
 	coolTime_ = 0.0f;
+
+	// 基底クラスから使いたい型へキャストする
+	std::shared_ptr<GameScene> gameScene =
+		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
+
+	// NULLチェック
+	if (!gameScene) return;
+
+	// コリジョンマネージャーを取得
+	std::shared_ptr<CollisionManager> collsionManager = gameScene->GetCollisionManager();
+
+	// アクターマネージャーを取得
+	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
+
+	// アクティブなアクターだけを衝突判定の管理クラスに登録
+	collsionManager->Register(GetThis());
 
 	Actor::Init(pos);
 
@@ -64,13 +97,18 @@ void Player::Update()
 	// 足元の当たり判定
 	CollisionFoot();
 
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE) && isShot_ && coolTime_ <= 0.0f)
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE) && isCanShot_ && coolTime_ <= 0.0f)
 	{
 		ShotAttack();
 		coolTime_ = SHOT_COOL_TIME;
+		isDoingShot_ = true;
+	}
+	else if(!isCanShot_)
+	{
+		isDoingShot_ = false;
 	}
 
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE) && jumpPow_ >= 0.0f)
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE) && isDoingShot_ && jumpPow_ >= 0.0f)
 	{
 		jumpPow_ = 0.0f;
 	}
@@ -156,7 +194,7 @@ void Player::ProcessJump()
 	{
 		// ジャンプボタンを離された時
 		cntJumpInput_ = INPUT_JUMP_FRAME;
-		isShot_ = true;
+		isCanShot_ = true;
 	}
 
 }
@@ -203,7 +241,7 @@ void Player::CollisionFoot(void)
 		isPutJumpKey_ = false;
 
 		// 弾は打てない
-		isShot_ = false;
+		isCanShot_ = false;
 
 	}
 	// 空中判定
@@ -231,5 +269,10 @@ void Player::ShotAttack()
   	std::shared_ptr<Actor> shot = actorManager->ActiveData(ActorType::SHOT,{pos_.x,pos_.y + 32.0f});
 
   	shot->Update();
+
+}
+
+void Player::CollisionStage()
+{
 
 }

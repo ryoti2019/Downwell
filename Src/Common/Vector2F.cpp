@@ -1,7 +1,7 @@
 #include "Vector2.h"
 #include "Vector2F.h"
 
-Vector2F::Vector2F(void)
+Vector2F::Vector2F()
 {
 	x = 0.0f;
 	y = 0.0f;

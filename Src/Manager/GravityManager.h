@@ -24,11 +24,11 @@ private:
 
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする
-	GravityManager(void);
+	GravityManager();
 	// コピーコンストラクタも同様
 	GravityManager(const GravityManager&);
 	// デストラクタも同様
-	~GravityManager(void) = default;
+	~GravityManager() = default;
 
 };
 

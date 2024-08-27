@@ -20,26 +20,26 @@ public:
 	};
 
 	// インスタンスの生成
-	static void CreateInstance(void);
+	static void CreateInstance();
 
 	// インスタンスの取得
-	static SceneManager& GetInstance(void) { return *instance_; };
+	static SceneManager& GetInstance() { return *instance_; };
 
-	void Init(void);
-	void Update(void);
-	void Draw(void);
+	void Init();
+	void Update();
+	void Draw();
 
 	// リソースの破棄
-	void Destroy(void);
+	void Destroy();
 
 	// 状態遷移
 	void ChangeScene(SCENE_ID nextId);
 
 	// シーンIDの取得
-	SCENE_ID GetSceneID(void) { return sceneId_; };
+	SCENE_ID GetSceneID() { return sceneId_; };
 
 	// デルタタイムの取得
-	float GetDeltaTime(void) const { return deltaTime_; };
+	float GetDeltaTime() const { return deltaTime_; };
 
 	// シーン遷移
 	void DoChangeScene(SCENE_ID sceneId);
@@ -73,13 +73,13 @@ private:
 
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする
-	SceneManager(void);
+	SceneManager();
 	// コピーコンストラクタも同様
 	SceneManager(const SceneManager&);
 	// デストラクタも同様
-	~SceneManager(void) = default;
+	~SceneManager() = default;
 
 	// デルタタイムをリセットする
-	void ResetDeltaTime(void);
+	void ResetDeltaTime();
 
 };
