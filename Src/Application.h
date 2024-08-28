@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <chrono>
 
 class Application
 {
@@ -39,6 +40,9 @@ public:
 	// 解放成功／失敗の判定
 	bool IsReleaseFail() const;
 
+	// デルタタイムの取得
+	float GetDeltaTime() const { return deltaTime_; };
+
 private:
 
 	// 静的インスタンス
@@ -49,6 +53,10 @@ private:
 
 	// 解放失敗
 	bool isReleaseFail_;
+
+	// デルタタイム
+	std::chrono::system_clock::time_point preTime_;
+	float deltaTime_;
 
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする

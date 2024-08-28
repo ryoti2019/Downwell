@@ -22,10 +22,12 @@ void GameScene::Init(void)
 
 }
 
-void GameScene::Update(void)
+void GameScene::Update(const float deltaTime)
 {
 
-	actorManager_->Update();
+	actorManager_->Update(deltaTime);
+
+	collisionManager_->Update();
 
 	stage_->Update();
 

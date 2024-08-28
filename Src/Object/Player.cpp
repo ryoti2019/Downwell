@@ -36,28 +36,33 @@ Player::~Player()
 void Player::Init(const Vector2F& pos)
 {
 
-	playerImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_IDLE).handleIds_;
+	Actor::Init(pos);
+
+#pragma region アニメーション
+
+	img_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::PLAYER_IDLE).handleIds_;
+	imgExtRate_ = 2.0;
+	turnXFlag_ = true;
+
+#pragma endregion
+
+#pragma region オブジェクトの初期化
+
+	movedPos_ = pos_;
+	size_ = { PLAYER_IMAGE_SIZE * static_cast<float>(imgExtRate_),PLAYER_IMAGE_SIZE * static_cast<float>(imgExtRate_) };
+	speed_ = 50.0f;
+	hp_ = 10;
 	actorType_ = ActorType::PLAYER;
-	pos_ = { Application::SCREEN_SIZE_X / 2,0 };
-	speed_ = 10.0f;
-	animCnt_ = 0;
-
-	// ジャンプしているか
 	isJump_ = false;
-
-	// 床と衝突しているかどうか
-	isHitFloor_ = false;
-
-	// ジャンプの入力時間
 	cntJumpInput_ = INPUT_JUMP_FRAME;
-
-	// ジャンプ力
+	isPutJumpKey_;
 	jumpPow_ = 0.0f;
-
 	isCanShot_ = false;
 	isDoingShot_ = false;
-
 	coolTime_ = 0.0f;
+	isHitLR_ = false;
+
+#pragma endregion
 
 	// 基底クラスから使いたい型へキャストする
 	std::shared_ptr<GameScene> gameScene =
@@ -72,18 +77,19 @@ void Player::Init(const Vector2F& pos)
 	// アクターマネージャーを取得
 	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
 
-	// アクティブなアクターだけを衝突判定の管理クラスに登録
+	// 衝突判定の管理クラスに登録
 	collsionManager->Register(GetThis());
-
-	Actor::Init(pos);
 
 }
 
-void Player::Update()
+void Player::Update(const float deltaTime)
 {
 
+	// 足元の当たり判定
+	CollisionStage();
+
 	// 移動処理
-	Move();
+	Move(deltaTime);
 
 	// ジャンプ操作
 	ProcessJump();
@@ -94,12 +100,9 @@ void Player::Update()
 	// 重力
 	jumpPow_ = GravityManager::GetInstance().AddGravity(jumpPow_);
 
-	// 足元の当たり判定
-	CollisionFoot();
-
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE) && isCanShot_ && coolTime_ <= 0.0f)
 	{
-		ShotAttack();
+		ShotAttack(deltaTime);
 		coolTime_ = SHOT_COOL_TIME;
 		isDoingShot_ = true;
 	}
@@ -113,25 +116,9 @@ void Player::Update()
 		jumpPow_ = 0.0f;
 	}
 
-	coolTime_ -= SceneManager::GetInstance().GetDeltaTime();
-
-}
-
-void Player::Draw()
-{
+	coolTime_ -= deltaTime;
 
 	animIdx_ = (animCnt_ / 10) % PLAYER_IMAGE_NUM;
-
-	// プレイヤーの描画
-	if (dir_.x == (float)DIR::RIGHT)
-	{
-		DrawRotaGraph(pos_.x, pos_.y, 2.0, 0.0, playerImg_[animIdx_], true);
-	}
-	else
-	{
-		DrawRotaGraph(pos_.x, pos_.y, 2.0, 0.0, playerImg_[animIdx_], true, true);
-	}
-
 	animCnt_++;
 
 }
@@ -140,22 +127,22 @@ void Player::Release()
 {
 }
 
-void Player::Move()
+void Player::Move(const float deltaTime)
 {
 
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_A))
 	{
 		dir_.x = (int)DIR::LEFT;
-		speed_ = 10.0f;
-		movePow_ = dir_.x * speed_;
-		pos_.x += movePow_;
+		movePow_ = dir_.x * speed_ * deltaTime;
+		movedPos_.x += movePow_;
+		turnXFlag_ = true;
 	}
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_D))
 	{
 		dir_.x = (int)DIR::RIGHT;
-		speed_ = 10.0f;
-		movePow_ = dir_.x * speed_;
-		pos_.x += movePow_;
+		movePow_ = dir_.x * speed_ * deltaTime;
+		movedPos_.x += movePow_;
+		turnXFlag_ = false;
 	}
 
 	movePow_ = 0.0f;
@@ -163,7 +150,7 @@ void Player::Move()
 
 void Player::Jump()
 {
-	pos_.y += jumpPow_;
+	movedPos_.y += jumpPow_;
 }
 
 void Player::ProcessJump()
@@ -185,7 +172,7 @@ void Player::ProcessJump()
 
 		// ジャンプ力に分配加算
  		float pow = jumpPow_ - (MAX_JUMP_POW / static_cast<float>(INPUT_JUMP_FRAME));
-		SetJumpPow(pow);
+   		SetJumpPow(pow);
 
 	}
 
@@ -213,22 +200,33 @@ void Player::SetJumpPow(float pow)
 
 }
 
-void Player::CollisionFoot(void)
+void Player::ShotAttack(const float deltaTime)
 {
 
-	if (pos_.y >= Application::SCREEN_SIZE_Y / 2)
-	{
-		isHitFloor_ = true;
-		pos_.y = Application::SCREEN_SIZE_Y / 2;
-	}
-	else
-	{
-		isHitFloor_ = false;
-	}
+	// 基底クラスから使いたい型へキャストする
+	std::shared_ptr<GameScene> gameScene =
+		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
+
+	// NULLチェック
+	if (!gameScene) return;
+
+	// アクターマネージャーを取得
+	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
+
+  	std::shared_ptr<Actor> shot = actorManager->ActiveData(ActorType::SHOT,{pos_.x,pos_.y + 32.0f});
+
+  	shot->Update(deltaTime);
+
+}
+
+void Player::CollisionStage()
+{
 
 	// 接地判定(足元の衝突判定)
-	if (isHitFloor_)
+	if (isHit_)
 	{
+
+		movedPos_.y = pos_.y;
 
 		// 地面についたのでジャンプをリセット
 		isJump_ = false;
@@ -247,32 +245,22 @@ void Player::CollisionFoot(void)
 	// 空中判定
 	else
 	{
+
+		pos_.y = movedPos_.y;
+
 		// 接地していないので、ジャンプ判定にする
 		isJump_ = true;
+
 	}
 
-}
+	if (isHitLR_)
+	{
 
-void Player::ShotAttack()
-{
-
-	// 基底クラスから使いたい型へキャストする
-	std::shared_ptr<GameScene> gameScene =
-		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
-
-	// NULLチェック
-	if (!gameScene) return;
-
-	// アクターマネージャーを取得
-	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
-
-  	std::shared_ptr<Actor> shot = actorManager->ActiveData(ActorType::SHOT,{pos_.x,pos_.y + 32.0f});
-
-  	shot->Update();
-
-}
-
-void Player::CollisionStage()
-{
+		movedPos_.x = pos_.x;
+	}
+	else
+	{
+		pos_.x = movedPos_.x;
+	}
 
 }

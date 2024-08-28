@@ -21,7 +21,7 @@ public:
 	~ActorManager() = default;
 
 	void Init();
-	void Update();
+	void Update(const float deltaTime);
 	void Draw();
 	void Release();
 	

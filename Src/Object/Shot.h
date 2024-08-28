@@ -28,7 +28,7 @@ public:
 	~Shot();
 
 	void Init(const Vector2F& pos) override;
-	void Update() override;
+	void Update(const float deltaTime) override;
 	void Draw() override;
 	void Release() override;
 
@@ -40,7 +40,7 @@ private:
 	// ¶‘¶ŠÔ‚ÌƒJƒEƒ“ƒ^
 	float aliveCnt_;
 
-	void Move() override;
+	void Move(const float deltaTime) override;
 
 };
 

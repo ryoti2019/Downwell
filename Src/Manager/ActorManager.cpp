@@ -5,7 +5,7 @@ void ActorManager::Init()
 {
 }
 
-void ActorManager::Update()
+void ActorManager::Update(const float deltaTime)
 {
 
 	// activeActorData_に非アクティブ状態のものがあれば
@@ -32,7 +32,7 @@ void ActorManager::Update()
 	{
 		for (const std::shared_ptr<Actor>& actor : data.second)
 		{
-			actor->Update();
+			actor->Update(deltaTime);
 		}
 	}
 }

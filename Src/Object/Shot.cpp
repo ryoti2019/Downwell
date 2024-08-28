@@ -14,6 +14,8 @@ Shot::~Shot()
 void Shot::Init(const Vector2F& pos)
 {
 
+	Actor::Init(pos);
+	size_ = { SHOT_IMAGE_X_SIZE,SHOT_IMAGE_Y_SIZE };
 	shotImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::SHOT).handleIds_;
 
 	actorType_ = ActorType::SHOT;
@@ -23,23 +25,19 @@ void Shot::Init(const Vector2F& pos)
 	animCnt_ = 0.0f;
 	aliveCnt_ = 0.0f;
 
-	pos_ = { 0.0f,0.0f };
-
-	Actor::Init(pos);
-
 }
 
-void Shot::Update()
+void Shot::Update(const float deltaTime)
 {
 
-	Move();
+	Move(deltaTime);
 
 	if (aliveCnt_ >= ALIVE_TIME)
 	{
 		SetIsActive(false);
 	}
 
-	aliveCnt_ += SceneManager::GetInstance().GetDeltaTime();
+	aliveCnt_ += deltaTime;
 	
 }
 
@@ -60,7 +58,7 @@ void Shot::Release()
 {
 }
 
-void Shot::Move()
+void Shot::Move(const float deltaTime)
 {
 	movePow_ = speed_* (int)DIR::DOWN;
 	pos_.y += movePow_;

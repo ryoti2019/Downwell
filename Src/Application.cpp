@@ -58,6 +58,12 @@ void Application::Init()
 	// 重力管理初期化
 	GravityManager::CreateInstance();
 
+	// デルタタイム
+	preTime_ = std::chrono::system_clock::now();
+
+	// デルタタイム
+	deltaTime_ = 1.0f / 60.0f;
+
 }
 
 void Application::Run()
@@ -70,8 +76,14 @@ void Application::Run()
 	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 	{
 
+		// デルタタイム
+		auto nowTime = std::chrono::system_clock::now();
+		deltaTime_ = static_cast<float>(
+			std::chrono::duration_cast<std::chrono::nanoseconds>(nowTime - preTime_).count() / 1000000000.0);
+		preTime_ = nowTime;
+
 		inputManager.Update();
-		sceneManager.Update();
+		sceneManager.Update(deltaTime_);
 
 		sceneManager.Draw();
 

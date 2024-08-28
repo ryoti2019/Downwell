@@ -29,9 +29,6 @@ void SceneManager::Init()
 
 	isSceneChanging_ = false;
 
-	// デルタタイム
-	preTime_ = std::chrono::system_clock::now();
-
 	// 初期シーンの設定
 	DoChangeScene(SCENE_ID::TITLE);
 
@@ -43,7 +40,7 @@ void SceneManager::Init()
 
 }
 
-void SceneManager::Update()
+void SceneManager::Update(const float deltaTime)
 {
 
 	if (scene_ == nullptr)
@@ -51,15 +48,9 @@ void SceneManager::Update()
 		return;
 	}
 
-	// デルタタイム
-	auto nowTime = std::chrono::system_clock::now();
-	deltaTime_ = static_cast<float>(
-		std::chrono::duration_cast<std::chrono::nanoseconds>(nowTime - preTime_).count() / 1000000000.0);
-	preTime_ = nowTime;
-
 	if (!isSceneChanging_)
 	{
-		scene_->Update();
+		scene_->Update(deltaTime);
 	}
 
 }
@@ -105,15 +96,6 @@ SceneManager::SceneManager()
 
 	isSceneChanging_ = false;
 
-	// デルタタイム
-	deltaTime_ = 1.0f / 60.0f;
-
-}
-
-void SceneManager::ResetDeltaTime()
-{
-	deltaTime_ = 0.016f;
-	preTime_ = std::chrono::system_clock::now();
 }
 
 void SceneManager::DoChangeScene(SCENE_ID sceneId)
@@ -142,8 +124,6 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	}
 
 	scene_->Init();
-
-	ResetDeltaTime();
 
 	waitSceneId_ = SCENE_ID::NONE;
 

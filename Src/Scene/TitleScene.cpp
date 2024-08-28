@@ -15,7 +15,7 @@ void TitleScene::Init()
 {
 }
 
-void TitleScene::Update()
+void TitleScene::Update(const float deltaTime)
 {
 
 	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_SPACE))

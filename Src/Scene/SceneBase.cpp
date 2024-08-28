@@ -12,7 +12,7 @@ void SceneBase::Init()
 {
 }
 
-void SceneBase::Update()
+void SceneBase::Update(const float deltaTime)
 {
 }
 

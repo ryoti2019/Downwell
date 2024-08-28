@@ -7,7 +7,7 @@ class GravityManager
 public:
 
 	// 重力
-	static constexpr float GRAVITY = 4.0f;
+	static constexpr float GRAVITY = 1.0f;
 
 	// 明示的にインステンスを生成する
 	static void CreateInstance();

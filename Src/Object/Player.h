@@ -22,7 +22,7 @@ public:
 	static constexpr int INPUT_JUMP_FRAME = 6;
 
 	// 最大ジャンプ力
-	static constexpr float MAX_JUMP_POW = 50.0f;
+	static constexpr float MAX_JUMP_POW = 30.0f;
 
 	// 弾を打てるまでのクールタイム
 	static constexpr float SHOT_COOL_TIME = 0.1f;
@@ -32,14 +32,12 @@ public:
 	~Player() override;
 
 	void Init(const Vector2F& pos) override;
-	void Update() override;
-	void Draw() override;
+	void Update(const float deltaTime) override;
 	void Release() override;
 
-private:
+	void SetIshitLR(const bool hit) { isHitLR_ = hit; };
 
-	// プレイヤー画像
-	int* playerImg_;
+private:
 
 	// ジャンプしているか
 	bool isJump_;
@@ -62,7 +60,10 @@ private:
 	// 弾を打つまでのクールタイムカウンタ
 	float coolTime_;
 
-	void Move() override;
+	// 右左の壁に当たっているか
+	bool isHitLR_;
+
+	void Move(const float deltaTime) override;
 
 	void Jump();
 
@@ -70,9 +71,7 @@ private:
 
 	void SetJumpPow(float pow);
 
-	void CollisionFoot();
-
-	void ShotAttack();
+	void ShotAttack(const float deltaTime);
 
 	void CollisionStage();
 

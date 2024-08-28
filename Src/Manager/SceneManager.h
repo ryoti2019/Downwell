@@ -1,6 +1,5 @@
 #pragma once
 #include <memory>
-#include <chrono>
 class SceneBase;
 class ActorManager;
 class GameScene;
@@ -26,7 +25,7 @@ public:
 	static SceneManager& GetInstance() { return *instance_; };
 
 	void Init();
-	void Update();
+	void Update(const float deltaTime);
 	void Draw();
 
 	// リソースの破棄
@@ -37,9 +36,6 @@ public:
 
 	// シーンIDの取得
 	SCENE_ID GetSceneID() { return sceneId_; };
-
-	// デルタタイムの取得
-	float GetDeltaTime() const { return deltaTime_; };
 
 	// シーン遷移
 	void DoChangeScene(SCENE_ID sceneId);
@@ -61,10 +57,6 @@ private:
 	// シーン遷移中判定
 	bool isSceneChanging_;
 
-	// デルタタイム
-	std::chrono::system_clock::time_point preTime_;
-	float deltaTime_;
-
 	// ゲームパッドで操作するためのフラグ
 	bool isGamePad_;
 
@@ -78,8 +70,5 @@ private:
 	SceneManager(const SceneManager&);
 	// デストラクタも同様
 	~SceneManager() = default;
-
-	// デルタタイムをリセットする
-	void ResetDeltaTime();
 
 };

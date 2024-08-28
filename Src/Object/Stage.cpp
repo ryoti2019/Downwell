@@ -28,32 +28,16 @@ void Stage::Init()
 	LoadCsvData();
 
 	Vector2F pos = { 0.0f,0.0f };
+
 	// ステージを生成
 	for (int y = 0; y < MAP_MAX_Y_SIZE; y++)
 	{
 		for (int x = 0; x < MAP_MAX_X_SIZE; x++)
 		{
-			mapNo_ = (MAP_NO)stageMap_[y][x];
-			switch (mapNo_)
-			{
-			case MAP_NO::PLAYER:
-				// プレイヤーを生成
-				actorManager->CreateActor<Player>();
-				pos = { (float)x * STAGE_IMAGE_SIZE + 416.0f, (float)y * STAGE_IMAGE_SIZE/* + (MAP_MAX_Y_SIZE * OFFSET_Y)*/ };
-				actorManager->ActiveData(ActorType::PLAYER, pos);
-				break;
-			case MAP_NO::ENEMY:
-				break;
-			case MAP_NO::WALL:
-				actorManager->CreateActor<Wall>();
-				pos = { (float)x * STAGE_IMAGE_SIZE + 416.0f, (float)y * STAGE_IMAGE_SIZE/* + (MAP_MAX_Y_SIZE * OFFSET_Y)*/ };
-				actorManager->ActiveData(ActorType::WALL, pos);
-				break;
-			case MAP_NO::BREAK_BLOCK:
-				break;
-			case MAP_NO::SCAFFOLD:
-				break;
-			}
+			auto mapNo = ConvertToActorType.find(stageMap_[y][x]);
+			CheckMapNo(mapNo->first);
+			pos = { static_cast<float>(x) * STAGE_IMAGE_SIZE + OFFEST_POS, static_cast<float>(y) * STAGE_IMAGE_SIZE/* + (MAP_MAX_Y_SIZE * OFFSET_Y)*/ };
+			actorManager->ActiveData(mapNo->second, pos);
 		}
 	}
 
@@ -143,6 +127,43 @@ void Stage::LoadCsvData()
 		}
 
 		y++;
+	}
+
+}
+
+void Stage::CheckMapNo(int no)
+{
+
+	// 基底クラスから使いたい型へキャストする
+	std::shared_ptr<GameScene> gameScene =
+		std::dynamic_pointer_cast<GameScene>(SceneManager::GetInstance().GetNowScene());
+
+	// NULLチェック
+	if (!gameScene) return;
+
+	// アクターマネージャーを取得
+	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
+
+	switch (no)
+	{
+	case -1:
+		break;
+	case 0:
+		// プレイヤーを生成
+		actorManager->CreateActor<Player>();
+		break;
+	case 1:
+		break;
+	case 2:
+		break;
+	case 3:
+		// プレイヤーを生成
+		actorManager->CreateActor<Wall>();
+		break;
+	case 4:
+		break;
+	case 5:
+		break;
 	}
 
 }
