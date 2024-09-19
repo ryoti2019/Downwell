@@ -48,15 +48,14 @@ void Player::Init(const Vector2F& pos)
 
 #pragma region オブジェクトの初期化
 
-	movedPos_ = pos_;
-	size_ = { PLAYER_IMAGE_SIZE * static_cast<float>(imgExtRate_),PLAYER_IMAGE_SIZE * static_cast<float>(imgExtRate_) };
-	speed_ = 50.0f;
+	size_ = {PLAYER_COLLISION_X_SIZE * static_cast<float>(imgExtRate_),PLAYER_IMAGE_SIZE * static_cast<float>(imgExtRate_) };
+	speed_ = 100.0f;
 	hp_ = 10;
+	jumpPow_ = 0.0f;
 	actorType_ = ActorType::PLAYER;
 	isJump_ = false;
 	cntJumpInput_ = INPUT_JUMP_FRAME;
 	isPutJumpKey_;
-	jumpPow_ = 0.0f;
 	isCanShot_ = false;
 	isDoingShot_ = false;
 	coolTime_ = 0.0f;
@@ -91,16 +90,13 @@ void Player::Update(const float deltaTime)
 	// 移動処理
 	Move(deltaTime);
 
-	// ジャンプ操作
-	ProcessJump();
+	//ProcessJump();
 
-	// ジャンプ
-	Jump();
+	//Jump();
 
-	// 重力
-	jumpPow_ = GravityManager::GetInstance().AddGravity(jumpPow_);
+	//jumpPow_ = GravityManager::GetInstance().AddGravity(jumpPow_);
 
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE) && isCanShot_ && coolTime_ <= 0.0f)
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_Q) && isCanShot_ && coolTime_ <= 0.0f)
 	{
 		ShotAttack(deltaTime);
 		coolTime_ = SHOT_COOL_TIME;
@@ -111,16 +107,16 @@ void Player::Update(const float deltaTime)
 		isDoingShot_ = false;
 	}
 
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE) && isDoingShot_ && jumpPow_ >= 0.0f)
-	{
-		jumpPow_ = 0.0f;
-	}
-
 	coolTime_ -= deltaTime;
 
 	animIdx_ = (animCnt_ / 10) % PLAYER_IMAGE_NUM;
 	animCnt_++;
 
+}
+
+void Player::OnCollision()
+{
+	isHitFoot_ = true;
 }
 
 void Player::Release()
@@ -130,73 +126,67 @@ void Player::Release()
 void Player::Move(const float deltaTime)
 {
 
+	Vector2F resultPos = GetPos();
+	Vector2F movePow = { 0.0f,0.0f };
+
+	// 左移動
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_A))
 	{
-		dir_.x = (int)DIR::LEFT;
-		movePow_ = dir_.x * speed_ * deltaTime;
-		movedPos_.x += movePow_;
+		movePow = Vector2F::vectorLeft * (speed_ * deltaTime);
+		resultPos += movePow;
 		turnXFlag_ = true;
 	}
+	// 右移動
 	if (InputManager::GetInstance().IsNew(KEY_INPUT_D))
 	{
-		dir_.x = (int)DIR::RIGHT;
-		movePow_ = dir_.x * speed_ * deltaTime;
-		movedPos_.x += movePow_;
+		movePow = Vector2F::vectorRight * (speed_ * deltaTime);
+		resultPos += movePow;
 		turnXFlag_ = false;
 	}
 
-	movePow_ = 0.0f;
-}
-
-void Player::Jump()
-{
-	movedPos_.y += jumpPow_;
-}
-
-void Player::ProcessJump()
-{
+	if (!isHitFoot_)
+	{
+		jumpPow_ = GravityManager::GetInstance().AddGravity(jumpPow_);
+	}
 
 	// 地面に着地しているときジャンプできる
-	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_SPACE) && !isJump_)
+	if (InputManager::GetInstance().IsTrgDown(KEY_INPUT_Q) && !isJump_)
 	{
- 		isJump_ = true;
+		isJump_ = true;
 		isPutJumpKey_ = true;
+		isHitFoot_ = false;
 	}
 
 	// 入力時間に応じてジャンプ量を変更する
-	if (InputManager::GetInstance().IsNew(KEY_INPUT_SPACE) &&
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_Q) &&
 		cntJumpInput_ < INPUT_JUMP_FRAME && isPutJumpKey_)
 	{
 
 		cntJumpInput_++;
 
 		// ジャンプ力に分配加算
- 		float pow = jumpPow_ - (MAX_JUMP_POW / static_cast<float>(INPUT_JUMP_FRAME));
-   		SetJumpPow(pow);
+		float pow = jumpPow_ - (MAX_JUMP_POW / static_cast<float>(INPUT_JUMP_FRAME));
+
+		SetJumpPow(pow);
 
 	}
 
 	// 2段ジャンプを禁止する
-	if (InputManager::GetInstance().IsTrgUp(KEY_INPUT_SPACE))
+	if (InputManager::GetInstance().IsTrgUp(KEY_INPUT_Q))
 	{
 		// ジャンプボタンを離された時
 		cntJumpInput_ = INPUT_JUMP_FRAME;
 		isCanShot_ = true;
 	}
 
-}
-
-void Player::SetJumpPow(float pow)
-{
-
-	// ジャンプ力を設定
-	jumpPow_ = pow;
-
-	// 重力がかかり過ぎるのを防ぐ
-	if (jumpPow_ > MAX_JUMP_POW)
+	if (InputManager::GetInstance().IsNew(KEY_INPUT_Q) && isDoingShot_ && jumpPow_ >= 0.0f)
 	{
-		jumpPow_ = MAX_JUMP_POW;
+		SetJumpPow(0.0f);
 	}
+
+	resultPos.y += jumpPow_;
+
+	SetPos(resultPos);
 
 }
 
@@ -213,7 +203,7 @@ void Player::ShotAttack(const float deltaTime)
 	// アクターマネージャーを取得
 	std::shared_ptr<ActorManager> actorManager = gameScene->GetActorManager();
 
-  	std::shared_ptr<Actor> shot = actorManager->ActiveData(ActorType::SHOT,{pos_.x,pos_.y + 32.0f});
+  	std::shared_ptr<Actor> shot = actorManager->ActiveData(ActorType::SHOT,{GetPos().x,GetPos().y + 32.0f});
 
   	shot->Update(deltaTime);
 
@@ -222,15 +212,31 @@ void Player::ShotAttack(const float deltaTime)
 void Player::CollisionStage()
 {
 
-	// 接地判定(足元の衝突判定)
-	if (isHit_)
-	{
+	//Vector2F playerPos = GetPos();
+	//Vector2F playerSize = GetSize();
+	//Vector2F colPos = GetColPos();
+	//Vector2F colSize = GetColSize();
+	//float playerLeftPosX = playerPos.x - playerSize.x / 2;
+	//float playerRightPosX = playerPos.x + playerSize.x / 2;
+	//float colLeftPosX = colPos.x - colSize.x / 2;
+	//float colRightPosX = colPos.x + colSize.x / 2;
+	//Vector2F vec = colPos - playerPos;
+	//vec.Normalize();
+	//if (!isHitFoot_ || (playerLeftPosX < colRightPosX || playerRightPosX > colLeftPosX))
+	//{
+	//	jumpPow_ = GravityManager::GetInstance().AddGravity(jumpPow_);
+	//	SetJumpPow(jumpPow_);
+	//	//isHitFoot_ = false;
+	//}
 
-		movedPos_.y = pos_.y;
+	// 接地判定(足元の衝突判定)
+	if (isHitFoot_)
+	{
 
 		// 地面についたのでジャンプをリセット
 		isJump_ = false;
-		SetJumpPow(0.0f);
+
+		//SetJumpPow(0.0f);
 
 		// 接地したらジャンプカウンタを元に戻す
 		cntJumpInput_ = 0;
@@ -245,22 +251,20 @@ void Player::CollisionStage()
 	// 空中判定
 	else
 	{
-
-		pos_.y = movedPos_.y;
-
 		// 接地していないので、ジャンプ判定にする
 		isJump_ = true;
-
 	}
 
-	if (isHitLR_)
+}
+
+void Player::SetJumpPow(float pow)
+{
+	// ジャンプ力を設定
+	jumpPow_ = pow;
+
+	// 重力がかかりすぎるのを防ぐ
+	if (jumpPow_ > MAX_JUMP_POW)
 	{
-
-		movedPos_.x = pos_.x;
+		jumpPow_ = MAX_JUMP_POW;
 	}
-	else
-	{
-		pos_.x = movedPos_.x;
-	}
-
 }

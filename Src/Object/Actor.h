@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <vector>
 #include "../Common/Vector2F.h"
 
 enum class ActorType {
@@ -14,13 +15,6 @@ enum class ActorType {
 	MAX
 };
 
-enum class DIR {
-	UP = -1,
-	DOWN = 1,
-	LEFT = -1,
-	RIGHT = 1
-};
-
 class Actor : public std::enable_shared_from_this<Actor>
 {
 public:
@@ -32,6 +26,7 @@ public:
 	virtual void Init(const Vector2F& pos);
 	virtual void Create(const Vector2F& pos);
 	virtual void Update(const float deltaTime);
+	virtual void OnCollision();
 	virtual void Draw();
 	virtual void DrawMap();
 	virtual void Release();
@@ -46,54 +41,62 @@ public:
 
 	void SetIsActive(const bool isActive) { isActive_ = isActive; }
 
-	const Vector2F& GetPos() const { return pos_; }
+	virtual const Vector2F& GetPos() const { return pos_; }
 
-	void SetPos(const Vector2F& pos) { pos_ = pos; };
+	const void SetPos(const Vector2F& pos) { pos_ = pos; };
+
+	const void AddPos(const Vector2F& pos) { pos_ += pos; };
+
+	const void SubPos(const Vector2F& pos) { pos_ -= pos; };
+
+	const Vector2F& GetColPos() const { return colPos_; };
+
+	const void SetColPos(const Vector2F& pos) { colPos_ = pos; };
+
+	const Vector2F& GetColSize() const { return colSize_; };
+
+	const void SetColSize(const Vector2F& size) { colSize_ = size; };
 
 	// 生きているかどうか
 	const bool GetIsAlive() const { return isAlive_; };
 
 	const Vector2F& GetSize() const { return size_; };
 
-	void SetIsHit(const bool hit) { isHit_ = hit; };
+	void SetIsHitFoot(const bool hit) { isHitFoot_ = hit; };
 
-	const Vector2F& GetMovedPos() const { return movedPos_; };
+	void SetIsHitLR(const bool hit) { isHitLR_ = hit; };
 
-	void SetMovedPos(const Vector2F& movedPos) { movedPos_ = movedPos; };
+	const std::vector<Vector2F>& GetCollisionPosList() const{ return collisionPosList_; };
 
 protected:
 
 #pragma region オブジェクトの情報
 
-	// 座標
-	Vector2F pos_;
-
-	// 移動後座標
-	Vector2F movedPos_;
-
 	// 画像サイズ
 	Vector2F size_;
-
-	// 方向
-	Vector2F dir_;
 
 	// スピード
 	float speed_;
 
-	// 移動量
-	float movePow_;
-
 	// HP
 	int hp_;
 
-	// 衝突しているか
-	bool isHit_;
+	// 着地しているか
+	bool isHitFoot_;
+
+	// 右左の壁に当たっているか
+	bool isHitLR_;
 
 	// アクターの種類
 	ActorType actorType_;
 
 	// 生きているかどうか
 	bool isAlive_;
+
+	const std::vector<Vector2F> collisionPosList_ =
+	{
+		{-size_.x / 2,-size_.y / 2},{-size_.x / 2,-size_.y / 2},{-size_.x / 2,-size_.y / 2},{-size_.x / 2,-size_.y / 2}
+	};
 
 #pragma endregion
 
@@ -125,12 +128,18 @@ protected:
 	// 移動
 	virtual void Move(const float deltaTime);
 
-	// 衝突判定
-	virtual void Collision();
-
 	const std::shared_ptr<Actor>& GetThis() { return shared_from_this(); }
 
 private:
+
+	// 座標
+	Vector2F pos_;
+
+	// 衝突座標
+	Vector2F colPos_;
+
+	// 衝突サイズ
+	Vector2F colSize_;
 
 	// アクティブ状態かどうか
 	bool isActive_;

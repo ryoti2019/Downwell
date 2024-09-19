@@ -29,13 +29,9 @@ public:
 
 	void Init(const Vector2F& pos) override;
 	void Update(const float deltaTime) override;
-	void Draw() override;
 	void Release() override;
 
 private:
-
-	// プレイヤー画像
-	int* shotImg_;
 
 	// 生存時間のカウンタ
 	float aliveCnt_;

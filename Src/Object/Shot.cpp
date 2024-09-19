@@ -16,7 +16,7 @@ void Shot::Init(const Vector2F& pos)
 
 	Actor::Init(pos);
 	size_ = { SHOT_IMAGE_X_SIZE,SHOT_IMAGE_Y_SIZE };
-	shotImg_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::SHOT).handleIds_;
+	img_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::SHOT).handleIds_;
 
 	actorType_ = ActorType::SHOT;
 	isAlive_ = false;
@@ -24,7 +24,8 @@ void Shot::Init(const Vector2F& pos)
 
 	animCnt_ = 0.0f;
 	aliveCnt_ = 0.0f;
-
+	imgExtRate_ = 2.0f;
+	
 }
 
 void Shot::Update(const float deltaTime)
@@ -38,20 +39,10 @@ void Shot::Update(const float deltaTime)
 	}
 
 	aliveCnt_ += deltaTime;
-	
-}
 
-void Shot::Draw()
-{
 	animIdx_ = (animCnt_ / 10) % SHOT_IMAGE_NUM;
-
-	// ’e‚Ì•`‰æ
-	if (GetIsActive())
-	{
-		DrawRotaGraph(pos_.x, pos_.y, 2.0, 0.0, shotImg_[animIdx_], true);
-	}
-
 	animCnt_++;
+
 }
 
 void Shot::Release()
@@ -60,6 +51,8 @@ void Shot::Release()
 
 void Shot::Move(const float deltaTime)
 {
-	movePow_ = speed_* (int)DIR::DOWN;
-	pos_.y += movePow_;
+	Vector2F movePow = Vector2F::vectorDown * speed_;
+	Vector2F resultPos = GetPos();
+	resultPos += movePow;
+	SetPos(resultPos);
 }

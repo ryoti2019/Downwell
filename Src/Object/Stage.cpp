@@ -36,7 +36,7 @@ void Stage::Init()
 		{
 			auto mapNo = ConvertToActorType.find(stageMap_[y][x]);
 			CheckMapNo(mapNo->first);
-			pos = { static_cast<float>(x) * STAGE_IMAGE_SIZE + OFFEST_POS, static_cast<float>(y) * STAGE_IMAGE_SIZE/* + (MAP_MAX_Y_SIZE * OFFSET_Y)*/ };
+			pos = { static_cast<float>(x) * STAGE_IMAGE_SIZE + OFFEST_POS, static_cast<float>(y) * STAGE_IMAGE_SIZE + 50.0f/* + (MAP_MAX_Y_SIZE * OFFSET_Y)*/ };
 			actorManager->ActiveData(mapNo->second, pos);
 		}
 	}

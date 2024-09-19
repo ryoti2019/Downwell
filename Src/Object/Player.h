@@ -18,11 +18,16 @@ public:
 	// プレイヤー画像サイズ
 	static constexpr int PLAYER_IMAGE_SIZE = 32;
 
+	// プレイヤーのコリジョンサイズ
+	static constexpr int PLAYER_COLLISION_X_SIZE = 17;
+
+	static constexpr int PLAYER_COLLISION_Y_SIZE = 28;
+
 	//	ジャンプキー入力を受け付けるフレーム数
 	static constexpr int INPUT_JUMP_FRAME = 6;
 
 	// 最大ジャンプ力
-	static constexpr float MAX_JUMP_POW = 30.0f;
+	static constexpr float MAX_JUMP_POW = 10.0f;
 
 	// 弾を打てるまでのクールタイム
 	static constexpr float SHOT_COOL_TIME = 0.1f;
@@ -33,23 +38,22 @@ public:
 
 	void Init(const Vector2F& pos) override;
 	void Update(const float deltaTime) override;
+	void OnCollision() override;
 	void Release() override;
 
-	void SetIshitLR(const bool hit) { isHitLR_ = hit; };
-
 private:
+
+	// ジャンプ力
+	float jumpPow_;
 
 	// ジャンプしているか
 	bool isJump_;
 
 	// ジャンプの入力時間
-	float cntJumpInput_;
+	 float cntJumpInput_;
 
 	// ジャンプキーの押下判定
 	bool isPutJumpKey_;
-
-	// ジャンプ力
-	float jumpPow_;
 
 	// 弾が打てるか
 	bool isCanShot_;
@@ -60,20 +64,13 @@ private:
 	// 弾を打つまでのクールタイムカウンタ
 	float coolTime_;
 
-	// 右左の壁に当たっているか
-	bool isHitLR_;
-
 	void Move(const float deltaTime) override;
-
-	void Jump();
-
-	void ProcessJump();
-
-	void SetJumpPow(float pow);
 
 	void ShotAttack(const float deltaTime);
 
 	void CollisionStage();
+
+	void SetJumpPow(float pow);
 
 };
 
